@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employer CV Screener</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <main class="container">
+        <h1>Employer-Facing Agentic CV Screener</h1>
+
+        <p class="notice">
+            This tool supports employer review. It does not make final hiring decisions.
+        </p>
+
+        <form id="screenForm">
+            <section>
+                <h2>Upload Job Description</h2>
+                <textarea
+                    name="job_description"
+                    placeholder="Paste the job description here..."
+                    required
+                ></textarea>
+            </section>
+
+            <section>
+                <h2>Upload Candidate CVs</h2>
+                <input
+                    type="file"
+                    name="candidate_cvs"
+                    accept=".txt"
+                    multiple
+                    required
+                >
+            </section>
+
+            <section>
+                <h2>Rank What Your Organisation Values Most</h2>
+
+                <p>Choose each category once, from most important to least important.</p>
+
+                <select name="priority_order[]" required>
+                    <option value="Experience">Experience</option>
+                    <option value="Skills">Skills</option>
+                    <option value="Projects">Projects</option>
+                    <option value="Education">Education</option>
+                    <option value="Extracurriculars">Extracurriculars</option>
+                </select>
+
+                <select name="priority_order[]" required>
+                    <option value="Skills">Skills</option>
+                    <option value="Experience">Experience</option>
+                    <option value="Projects">Projects</option>
+                    <option value="Education">Education</option>
+                    <option value="Extracurriculars">Extracurriculars</option>
+                </select>
+
+                <select name="priority_order[]" required>
+                    <option value="Projects">Projects</option>
+                    <option value="Experience">Experience</option>
+                    <option value="Skills">Skills</option>
+                    <option value="Education">Education</option>
+                    <option value="Extracurriculars">Extracurriculars</option>
+                </select>
+
+                <select name="priority_order[]" required>
+                    <option value="Education">Education</option>
+                    <option value="Experience">Experience</option>
+                    <option value="Skills">Skills</option>
+                    <option value="Projects">Projects</option>
+                    <option value="Extracurriculars">Extracurriculars</option>
+                </select>
+
+                <select name="priority_order[]" required>
+                    <option value="Extracurriculars">Extracurriculars</option>
+                    <option value="Education">Education</option>
+                    <option value="Projects">Projects</option>
+                    <option value="Skills">Skills</option>
+                    <option value="Experience">Experience</option>
+                </select>
+            </section>
+
+            <button type="submit">Review Anonymous Shortlist</button>
+        </form>
+
+        <div id="loading" class="hidden">Screening CVs...</div>
+        <div id="error"></div>
+        <section id="results"></section>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
