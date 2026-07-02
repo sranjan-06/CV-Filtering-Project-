@@ -145,7 +145,7 @@ agent_five = Agent(
         "for, and never let strength in one category color your assessment of a different "
         "one. "
         "Return the result as strict JSON containing a score and justification for each of the "
-        "five categories, plus the final weighted overall_score."
+        "five categories, plus the final weighted overall_score. Ensure consistency in scoring process i.e if you have seen a CV before and are scoring it again, make sure u give it the same score or at the very least within 5%"
     ),
     backstory=(
         "You've spent a decade on hiring panels and learned how easily one standout resume "
