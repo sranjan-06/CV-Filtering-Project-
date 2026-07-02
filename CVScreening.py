@@ -10,7 +10,7 @@ TRACING = True
 llm = LLM(
     model="ollama/granite4.1:3b",
     base_url="http://localhost:11434",
-    temperature=0.3,
+    temperature=0.1,
 )
 
 # ======================================================================
