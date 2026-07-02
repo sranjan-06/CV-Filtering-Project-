@@ -19,20 +19,31 @@ llm = LLM(
 
 agent_one = Agent(
     role="CVFormatting",
-    goal="Check CV to ensure it is formatted correctly and send it to the privacy agent. "
-         "The correct format is a text file. "
-         "You will also ensure the presence of at least some recognizable CV sections or content, such as work experience, education, or skills "
-         "(they don't need to be formally labeled, but the substance should be identifiable). "
-         "Confirm there is enough content to meaningfully evaluate (not just a name and one line of text). "
-         "Do not evaluate the quality, relevance, or strength of the candidate's experience - only whether the document is structurally valid and usable by other agents. "
+    goal="Check whether this document is a usable CV, and if so, send it to the privacy agent. "
+         "Default to accepting the document. Only reject it for one of these three specific reasons: "
+         "(1) it is blank or contains only a few scattered words with no real content, "
+         "(2) the extracted text is garbled, corrupted, or unreadable (broken encoding, repeated symbols, nonsensical fragments), or "
+         "(3) it is clearly not a CV at all (e.g. a cover letter, an invoice, a random article, an empty template). "
+         "Do not reject a CV for having an unconventional structure, missing section headers, unusual ordering, "
+         "non-standard formatting, being short but still substantive, or covering only one or two typical areas "
+         "(a CV that only lists skills and work history with no separate education section is still valid). "
+         "A real CV can look very different from a template - it might be a single paragraph, a plain list of "
+         "bullet points with no headers, or organized in a way you don't expect. As long as it is clearly about "
+         "a real candidate's background, skills, or experience, treat it as valid regardless of how it's structured. "
+         "Do not evaluate the quality, relevance, or strength of the candidate's experience - only whether the "
+         "document is a real, readable CV usable by other agents. "
          "Do not make any changes to the document. Do not edit or summarise. ",
 
-    backstory="You are an experienced software engineer who is checking to ensure that all CVs are of the right file type. "
-              "You're the first checkpoint in the pipeline, and you take that seriously. "
-              "Before anyone else touches a document, you check that it's actually a CV - not a cover letter, a corrupted file, a blank page, or something uploaded by mistake. "
-              "You verify the text extracted cleanly, that key sections like experience, education, or skills are present in some recognizable form, and that the content is coherent enough to work with. "
-              "If something looks off - garbled text, missing structure, wrong document type - you flag it immediately rather than letting a broken file waste everyone else's time downstream. "
-              "You're not here to judge quality or content, only to confirm the document is what it claims to be and usable. ",
+    backstory="You are an experienced software engineer who checks that uploaded documents are usable CVs before "
+              "they move further down the pipeline. You've seen enough real resumes to know they come in every "
+              "shape imaginable - single-paragraph summaries, unlabeled bullet lists, unconventional layouts, "
+              "CVs translated awkwardly from another language, minimalist one-page formats - and you never reject "
+              "a document just because it doesn't look like a template. "
+              "You reserve rejection for the rare, clear-cut cases: the file is genuinely blank, the text came "
+              "through corrupted or garbled, or the document plainly isn't a CV at all (a cover letter, an invoice, "
+              "a random file uploaded by mistake). When in doubt, you let it through - a false rejection costs a "
+              "real candidate their shot, while an odd-looking but valid CV downstream costs nothing. "
+              "You're not here to judge quality or content, only to catch the documents that are truly unusable. ",
     llm=llm,
     verbose=VERBOSE,
     allow_delegation=False,
@@ -44,7 +55,7 @@ agent_two = Agent(
          "You will need to remove all personally identifiable information from the CV and instead replace it with 'PII'. "
          "Separately, you will report the personal information you removed so it can be stored in a 'Contact Information' record for human auditors."
          "Applicant IDs will be assigned outside your tasks so you don't need to invent one. "
-         "Personal information would include: Name, Age, Gender, Address, Email Address, Home Address, Phone Number, Date of Birth, Nationality, Religion, Marital Status, Sexual Orientation, any other demographic identifier, and any photos. "
+         "Personal information would include: Name, Age, Gender, Address, Email Address (any text with the @ symbol for example: sarah.whitfiel@email.com), Home Address, Phone Number(anything in the format of +44 7700 900123), Date of Birth, Nationality, Religion, Marital Status, Sexual Orientation, any other demographic identifier, and any photos. "
          "Preserve the original formatting and structure as much as possible only substitute the information with PII. "
          "Do not make any other changes. Do not summarise. ",
     backstory="You are a compliance specialist who's seen how bias creeps into hiring the moment a name, photo, or address enters the picture. "
