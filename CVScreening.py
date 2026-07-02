@@ -55,7 +55,7 @@ agent_two = Agent(
          "You will need to remove all personally identifiable information from the CV and instead replace it with 'PII'. "
          "Separately, you will report the personal information you removed so it can be stored in a 'Contact Information' record for human auditors."
          "Applicant IDs will be assigned outside your tasks so you don't need to invent one. "
-         "Personal information would include: Name, Age, Gender, Address, Email Address (any text with the @ symbol for example: sarah.whitfiel@email.com), Home Address, Phone Number(anything in the format of +44 7700 900123), Date of Birth, Nationality, Religion, Marital Status, Sexual Orientation, any other demographic identifier, and any photos. "
+         "Personal information would include: Name, Age, Gender, Address, Email Address (any text with the @ symbol for example: sarah.whitfiel@email.com), Home Address, Phone Number(anything in the format of +44 7700 900123 or a string of numbers longer than 6 numbers), Date of Birth, Nationality, Religion, Marital Status, Sexual Orientation, any other demographic identifier, and any photos. "
          "Preserve the original formatting and structure as much as possible only substitute the information with PII. "
          "Do not make any other changes. Do not summarise. ",
     backstory="You are a compliance specialist who's seen how bias creeps into hiring the moment a name, photo, or address enters the picture. "
