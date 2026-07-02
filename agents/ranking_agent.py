@@ -1,27 +1,67 @@
 from agents.base_agent import BaseAgent
+from services.scoring import calculate_score
 
 
 class RankingAgent(BaseAgent):
-    def __init__(self):
-        super().__init__("Ranking Agent")
+    def confidence_from_score(self, score):
+        if score >= 75:
+            return "High"
+        if score >= 50:
+            return "Medium"
+        return "Low"
+
+    def get_missing_requirements(self, required_matches):
+        return [
+            item["requirement"]
+            for item in required_matches
+            if item["status"] != "met"
+        ]
+
+    def build_reason(self, score):
+        if score >= 75:
+            return "Strong match with clear evidence in employer-prioritised areas."
+        if score >= 50:
+            return "Partial match with some evidence, but requires human review."
+        return "Limited evidence against the job description and employer priorities."
 
     def run(self, payload):
-        # TODO: Member 5 fills this in with real scoring
         shortlist = []
 
-        for index, result in enumerate(payload["candidate_results"], start=1):
+        for result in payload["candidate_results"]:
+            candidate_id = result["candidate_id"]
+            summary = result["summary"]
+            eligibility = result["eligibility"]
+
+            score = calculate_score(
+                eligibility["required_matches"],
+                eligibility["preferred_matches"],
+                eligibility["category_assessment"],
+                summary["summary_by_category"],
+            )
+
+            missing = self.get_missing_requirements(eligibility["required_matches"])
+
             shortlist.append({
-                "rank": index,
-                "candidate_id": result["candidate_id"],
-                "score": 0,
-                "confidence": "Low",
+                "rank": None,
+                "candidate_id": candidate_id,
+                "score": score,
+                "confidence": self.confidence_from_score(score),
                 "category_weights": payload["category_weights"],
-                "reason": "Placeholder ranking. Ranking Agent not implemented yet.",
-                "missing_requirements": [],
-                "human_review_note": "Human employer must review before making any final decision."
+                "reason": self.build_reason(score),
+                "missing_requirements": missing,
+                "human_review_note": (
+                    "Employer should review the evidence and missing requirements before making any final decision."
+                ),
             })
+
+        shortlist.sort(key=lambda item: (-item["score"], item["candidate_id"]))
+
+        for index, candidate in enumerate(shortlist, start=1):
+            candidate["rank"] = index
 
         return {
             "shortlist": shortlist,
-            "selected_candidate_ids": [item["candidate_id"] for item in shortlist]
+            "selected_candidate_ids": [
+                candidate["candidate_id"] for candidate in shortlist
+            ],
         }

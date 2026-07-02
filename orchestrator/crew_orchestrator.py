@@ -20,39 +20,60 @@ def run_cv_screening(employer_input):
         validation = validator.run({
             "job_description": employer_input["job_description"],
             "candidate": candidate,
-            "priority_order": employer_input["priority_order"]
+            "priority_order": employer_input["priority_order"],
         })
+
+        warnings.extend(validation.get("validation_warnings", []))
+        warnings.extend(validation.get("priority_validation", {}).get("warnings", []))
+
+        if not validation["is_valid"]:
+            candidate_results.append({
+                "candidate_id": candidate["candidate_id"],
+                "validation": validation,
+                "privacy": {},
+                "summary": {
+                    "summary_by_category": {},
+                },
+                "eligibility": {
+                    "required_matches": [],
+                    "preferred_matches": [],
+                    "category_assessment": {},
+                    "eligibility_status": "invalid_input",
+                },
+            })
+            continue
 
         privacy = privacy_agent.run({
             "candidate_id": candidate["candidate_id"],
-            "raw_text": candidate["raw_text"]
+            "raw_text": candidate["raw_text"],
         })
 
         summary = summariser.run({
             "candidate_id": candidate["candidate_id"],
-            "anonymous_profile_text": privacy["anonymous_profile_text"]
+            "anonymous_profile_text": privacy["anonymous_profile_text"],
         })
 
         eligibility = eligibility_checker.run({
             "candidate_id": candidate["candidate_id"],
             "job_description": employer_input["job_description"],
             "category_weights": employer_input["category_weights"],
-            "summary_by_category": summary["summary_by_category"]
+            "summary_by_category": summary["summary_by_category"],
         })
 
         candidate_results.append({
             "candidate_id": candidate["candidate_id"],
             "validation": validation,
-            "privacy": privacy,
+            "privacy": {
+                "candidate_id": privacy["candidate_id"],
+                "privacy_actions": privacy["privacy_actions"],
+            },
             "summary": summary,
-            "eligibility": eligibility
+            "eligibility": eligibility,
         })
-
-        warnings.extend(validation.get("validation_warnings", []))
 
     ranking = ranking_agent.run({
         "candidate_results": candidate_results,
-        "category_weights": employer_input["category_weights"]
+        "category_weights": employer_input["category_weights"],
     })
 
     return {
@@ -60,6 +81,6 @@ def run_cv_screening(employer_input):
         "category_weights": employer_input["category_weights"],
         "shortlist": ranking["shortlist"],
         "selected_candidate_ids": ranking["selected_candidate_ids"],
-        "warnings": warnings,
-        "fairness_notice": FAIRNESS_NOTICE
+        "warnings": list(set(warnings)),
+        "fairness_notice": FAIRNESS_NOTICE,
     }
