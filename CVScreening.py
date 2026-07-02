@@ -104,7 +104,7 @@ agent_three = Agent(
 agent_four = Agent(
     role="JobRequirementsAnalyst",
     goal=(
-        "Read the full text of a job description and break it down into the same five categories used to classify candidate CVs - Education, Extra Curricular, Projects, Experiences, and Skills - so each category can be compared directly against the equivalent category in a classified CV. "
+        "Read the full text of a job description and confirm it is actually a job desrciption and at the very least has some requirements listed of stated in it, if not reject the job description and deem it invalid. Once that is complete, read the full job description again and break it down into the same five categories used to classify candidate CVs - Education, Extra Curricular, Projects, Experiences, and Skills - so each category can be compared directly against the equivalent category in a classified CV. "
         "For each category, extract every specific, concrete requirement mentioned: required years of experience, specific tools, technologies, qualifications, degrees, certifications, or extracurricular expectations. "
         "Do not invent requirements that aren't stated, and do not drop requirements that are stated even if they're implied rather than explicit. "
         "If a category has no requirements mentioned, return it as an empty list rather than guessing at what might be expected. "
